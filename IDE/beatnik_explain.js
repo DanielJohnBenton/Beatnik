@@ -277,9 +277,28 @@ function Explain(beatnik)
 	div_explanation.innerHTML = html;
 }
 
+function ShowLetterScores()
+{
+	var div_letters = document.getElementById("div_letters");
+	
+	div_letters.innerHTML ="<span onclick='HideLetterScores()'>Hide letter scores &lt; &lt;</span><br />"
+		+"<table cellpadding='5' cellspacing='0' border='1'>"
+		+"<tr><td>AEIOU NRTLS</td><td>1</td></tr>"
+		+"<tr><td>DG</td><td>2</td></tr>"
+		+"<tr><td>BCMP</td><td>3</td></tr>"
+		+"<tr><td>FHVWY</td><td>4</td></tr>"
+		+"<tr><td>K</td><td>5</td></tr>"
+		+"<tr><td>JX</td><td>8</td></tr>"
+		+"<tr><td>QZ</td><td>10</td></tr>"
+		+"</table><br />";
+}
 
-
-
+function HideLetterScores()
+{
+	var div_letters = document.getElementById("div_letters");
+	
+	div_letters.innerHTML = "<span onclick='ShowLetterScores()'>Show letter scores &gt; &gt;</span>";
+}
 
 
 
