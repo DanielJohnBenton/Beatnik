@@ -573,18 +573,36 @@ bool Beatnik(string code)
 	return true;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-	//ifstream file("examples/esolangs_truthmachine.beatnik");
-	// ifstream file("examples/esolangs_alphabet.beatnik");
-	ifstream file("examples/wikipedia_helloworld.beatnik");
+	if(argc != 2)
+	{
+		cout <<"Please specify a file."<< endl
+			<<"Usage: .\\beatnik FILENAME.beatnik"<< endl;
+		
+		return 0;
+	}
+	
+	ifstream file(argv[1]);
+	
+	if(!file.good())
+	{
+		file.close();
+		
+		cout <<"File '"<< argv[1] <<"' not found."<< endl;
+		
+		return 0;
+	}
 	
 	string code = "";
 	string line = "";
+	int nLines = 0;
 	
 	while(getline(file, line))
 	{
-		code +=" "+ line;
+		nLines++;
+		
+		code += ((nLines > 1) ? "\n"+ line : line);
 	}
 	
 	file.close();
