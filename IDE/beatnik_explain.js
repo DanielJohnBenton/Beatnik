@@ -215,6 +215,8 @@ function Explain(beatnik)
 	var html = "<table cellpadding='5' cellspacing='0' border='1'>"
 		+"<tr><th>#</th><th>Word</th><th>Score</th><th>Operation</th></tr>";
 	
+	var warning = false;
+	
 	for(let i = 0, n = words.length; i < n; i++)
 	{
 		var word = words[i].word;
@@ -228,45 +230,49 @@ function Explain(beatnik)
 			
 			if(x >= n)
 			{
-				if(div_explanation.innerHTML.indexOf("A PARAMETER IS REQUIRED") == -1)
-				{
-					div_explanation.innerHTML +="<br /><b>A PARAMETER IS REQUIRED!</b>"
-				}
-				return;
-			}
-			
-			if(score == 5)
-			{
-				operation = "push("+ words[x].score +")";
+				warning = true;
 			}
 			else
 			{
-				operation = "if(pop()";
+				warning = false;
 				
-				if(score == 13)
+				if(score == 5)
 				{
-					operation +="==0)<br />GOTO "+ (number + words[x].score + 1);
+					operation = "push("+ words[x].score +")";
 				}
-				else if(score == 14)
+				else
 				{
-					operation +="!=0)<br />GOTO "+ (number + words[x].score + 1);
+					operation = "if(pop()";
+					
+					if(score == 13)
+					{
+						operation +="==0)<br />GOTO "+ (number + words[x].score + 1);
+					}
+					else if(score == 14)
+					{
+						operation +="!=0)<br />GOTO "+ (number + words[x].score + 1);
+					}
+					else if(score == 15)
+					{
+						operation +="==0)<br />GOTO "+ (number - (words[x].score));
+					}
+					else if(score == 16)
+					{
+						operation +="!=0)<br />GOTO "+ (number - (words[x].score));
+					}
 				}
-				else if(score == 15)
-				{
-					operation +="==0)<br />GOTO "+ (number - (words[x].score));
-				}
-				else if(score == 16)
-				{
-					operation +="!=0)<br />GOTO "+ (number - (words[x].score));
-				}
+				
+				word +="<br />"+ words[x].word;
+				score +="<br />"+ words[x].score;
+				
+				number +="<br />"+ (number + 1);
+				
+				i++;
 			}
-			
-			word +="<br />"+ words[x].word;
-			score +="<br />"+ words[x].score;
-			
-			number +="<br />"+ (number + 1);
-			
-			i++;
+		}
+		else
+		{
+			warning = false;
 		}
 		
 		html +="<tr><td>"+ number +"</td><td>"+ word +"</td><td>"+ score +"</td><td>"+ operation +"</td></tr>";
@@ -275,6 +281,16 @@ function Explain(beatnik)
 	html +="</table>";
 	
 	div_explanation.innerHTML = html;
+	
+	var div_warning = document.getElementById("div_warning");
+	if(warning)
+	{
+		div_warning.innerHTML = "<br /><b>A PARAMETER IS REQUIRED!</b>"
+	}
+	else
+	{
+		div_warning.innerHTML = "";
+	}
 }
 
 function ShowLetterScores()
