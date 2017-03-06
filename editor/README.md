@@ -5,3 +5,7 @@ A useful tool that tells you what each word is doing.
 Screenshot:
 
 ![screenshot](screenshots/screenshot1.png)
+
+---
+
+![screenshot](screenshots/screenshot2.png)
