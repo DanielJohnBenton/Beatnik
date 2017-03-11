@@ -13,6 +13,44 @@ struct word_t
 	signed short score;
 };
 
+// =========================================================================================
+class BeatnikStack
+{
+	public:
+		BeatnikStack();
+		
+		signed short Pop();
+		void Push(signed short pushed);
+	
+	private:
+		vector<signed short> stack;
+};
+
+BeatnikStack::BeatnikStack()
+{
+	stack.push_back(0);
+}
+
+signed short BeatnikStack::Pop()
+{
+	signed short value = stack.back();
+	
+	stack.pop_back();
+	
+	if(stack.size() == 0)
+	{
+		stack.push_back(0);
+	}
+	
+	return value;
+}
+
+void BeatnikStack::Push(signed short pushed)
+{
+	stack.push_back(pushed);
+}
+// =========================================================================================
+
 inline signed short ScoreLetter(char letter)
 {
 	switch(letter)
@@ -287,8 +325,7 @@ bool Beatnik(string code)
 		cout << endl;
 	#endif
 	
-	vector<signed short> stack;
-	stack.push_back(0);
+	BeatnikStack stack;
 	
 	for(signed long i = 0; i < nWords; i++)
 	{
@@ -306,128 +343,72 @@ bool Beatnik(string code)
 				
 				i++;
 				
-				stack.push_back(words[i].score);
+				stack.Push(words[i].score);
 				break;
 			}
 
 			case 6: // Pop a number from the stack and discard it.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [6]", words[i]);
-					return false;
-				}
-				
-				stack.pop_back();
+				stack.Pop();
 				
 				break;
 			}
 
 			case 7: // Pop two numbers, add them, and push the result.
 			{
-				if(stack.size() < 2)
-				{
-					Error("Tried to pop 2 numbers from a stack with less. [7]", words[i]);
-					return false;
-				}
-				
-				signed short number1 = stack.back();
-				stack.pop_back();
-				
-				signed short number2 = stack.back();
-				stack.pop_back();
-				
-				stack.push_back(number1 + number2);
+				stack.Push(stack.Pop() + stack.Pop());
 				
 				break;
 			}
 
 			case 8: // Input a character and push its value.
 			{
-				stack.push_back((signed short)getch());
+				stack.Push((signed short)getch());
 				
 				break;
 			}
 
 			case 9: // Pop a number and output it as a character.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [9]", words[i]);
-					return false;
-				}
-				
-				cout << (char)stack.back();
-				
-				stack.pop_back();
+				cout << (char)stack.Pop();
 				
 				break;
 			}
 
 			case 10: // Pop two numbers, subtract the first one popped from the second one popped, and push the result.
 			{
-				if(stack.size() < 2)
-				{
-					Error("Tried to pop 2 numbers from a stack with less. [10]", words[i]);
-					return false;
-				}
+				signed short number1 = stack.Pop();
+				signed short number2 = stack.Pop();
 				
-				signed short number1 = stack.back();
-				stack.pop_back();
-				
-				signed short number2 = stack.back();
-				stack.pop_back();
-				
-				stack.push_back(number2 - number1);
+				stack.Push(number2 - number1);
 				
 				break;
 			}
 
 			case 11: // Pop two numbers, swap them, and push them back.
 			{
-				if(stack.size() < 2)
-				{
-					Error("Tried to pop 2 numbers from a stack with less. [11]", words[i]);
-					return false;
-				}
+				signed short number1 = stack.Pop();
+				signed short number2 = stack.Pop();
 				
-				signed short number1 = stack.back();
-				stack.pop_back();
-				
-				signed short number2 = stack.back();
-				stack.pop_back();
-				
-				stack.push_back(number1);
-				stack.push_back(number2);
+				stack.Push(number1);
+				stack.Push(number2);
 				
 				break;
 			}
 
 			case 12: // Pop a number and push it twice.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [12]", words[i]);
-					return false;
-				}
+				signed short number = stack.Pop();
 				
-				stack.push_back(stack.back()); // no need to pop, just push once
+				stack.Push(number);
+				stack.Push(number);
 				
 				break;
 			}
 
 			case 13: // Pop a number and skip ahead n (actually n+1) words if the number is zero.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [13]", words[i]);
-					return false;
-				}
-				
-				signed short number = stack.back();
-				stack.pop_back();
-				
-				if(number == 0)
+				if(stack.Pop() == 0)
 				{	
 					if((i + 1) >= nWords)
 					{
@@ -453,16 +434,7 @@ bool Beatnik(string code)
 
 			case 14: //Pop a number and skip ahead n (actually n+1) words if the number isn't zero.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [14]", words[i]);
-					return false;
-				}
-				
-				signed short number = stack.back();
-				stack.pop_back();
-				
-				if(number != 0)
+				if(stack.Pop() != 0)
 				{
 					if((i + 1) >= nWords)
 					{
@@ -488,16 +460,7 @@ bool Beatnik(string code)
 
 			case 15: //Pop a number and skip back n words if the number is zero.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [15]", words[i]);
-					return false;
-				}
-				
-				signed short number = stack.back();
-				stack.pop_back();
-				
-				if(number == 0)
+				if(stack.Pop() == 0)
 				{
 					if((i + 1) >= nWords)
 					{
@@ -523,16 +486,7 @@ bool Beatnik(string code)
 
 			case 16: //Pop a number and skip back n words if the number isn't zero.
 			{
-				if(stack.size() == 0)
-				{
-					Error("Tried to pop from empty stack. [16]", words[i]);
-					return false;
-				}
-				
-				signed short number = stack.back();
-				stack.pop_back();
-				
-				if(number != 0)
+				if(stack.Pop() != 0)
 				{
 					if((i + 1) >= nWords)
 					{
